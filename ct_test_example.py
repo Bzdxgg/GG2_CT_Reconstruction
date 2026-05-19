@@ -9,7 +9,12 @@ from create_dicom import *
 from ct_calibrate import *
 
 def test_1():
-
+    # Test 1: type-6 hip phantom reconstruction
+    # Purpose: perform a full scan-and-reconstruct on a type-6 (hip) phantom
+    # and save the resulting image and the phantom for visual inspection.
+    # Expected output: two image files in the `results` folder named
+    # 'test_1_image' and 'test_1_phantom' showing the reconstruction and
+    # the ground-truth phantom respectively.
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 6)
@@ -23,6 +28,11 @@ def test_1():
 
 
 def test_2():
+    # Test 2: compare profiles of 2 phantoms
+    # Purpose: generate 2 phantoms (circle and point) and compare the
+    # central row intensity profiles. This helps verify spatial response and
+    # resolution behaviour of the reconstruction pipeline.
+    # We saved 1D profile plots in 'results' folder.
 
     # work out what the initial conditions should be
     mat = Material()
@@ -41,7 +51,11 @@ def test_2():
 
 
 def test_3():
-    # work out what the initial conditions should be
+    # Test 3: ideal-source bone phantom mean-value check
+    # Purpose: use an ideal source to scan a bone phantom and print
+    # the theoretical vs measured mean attenuation in the central ROI. This is
+    # useful for numeric sanity checks rather than visual inspection.
+    # Ideal coefficient and measured mean value are outputed as text file.
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 1, 'Bone')
@@ -51,9 +65,13 @@ def test_3():
     # save some meaningful results
     mean_val = np.mean(y[64:192, 64:192])
     idx = mat.mev.tolist().index(0.07)
-    print(f"Ideal value is {mat.coeff('Bone')[idx]}")
-    print(f"Mean value is {mean_val}")
-    
+    # print(f"Ideal value is {mat.coeff('Bone')[idx]}")
+    # print(f"Mean value is {mean_val}")
+    with open('results/test_3_summary.txt', 'w') as f:
+        f.write('Test 3: calibration circle phantom\n')
+        f.write('Ideal value: ' + str(mat.coeff('Bone')[idx]) + '\n')
+        f.write('Mean value: ' + str(mean_val) + '\n')
+
 # print('Test 1')
 # test_1()
 # print('Test 2')
