@@ -54,7 +54,7 @@ def test_calibrate(i=2):
     p_calibrated_bone = ct_calibrate(photons, mat, p_bone, scale)
     
     measured_bone_attenuation = np.max(p_calibrated_bone)
-    print(f"Max Attenuation for Bone (Effective mu * 0.1cm): {measured_bone_attenuation:.6f}")
+    print(f"Max Attenuation for Bone: {measured_bone_attenuation:.6f}")
 
     I0_ideal = np.sum(photons)
     I_ideal = np.sum(photons * np.exp(-coeff * scale))
@@ -115,18 +115,6 @@ def test_calibrate_scales(i=2):
 
     return scales, measured_attenuations, ideal_attenuations
 
-def test_reconstruction(i=2):
-    mat = Material()
-    src = Source()
-
-
-    photons = src.photon('100kVp, 2mm Al')
-    m = ct_phantom(mat.name, 256, i)
-    draw(m)
-    reconstruction = scan_and_reconstruct(photons, mat, m, 0.1, 256)
-    draw(reconstruction, caxis=[0, np.max(reconstruction)])
-
-test_reconstruction(6)
-# scales, measured, ideal = test_calibrate_scales()
+scales, measured, ideal = test_calibrate_scales()
 # test_calibrate()
 # test_sinogram(2)
