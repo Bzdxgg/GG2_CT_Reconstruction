@@ -9,12 +9,13 @@ from create_dicom import *
 from ct_calibrate import *
 
 def test_1():
-    # Test 1: type-6 hip phantom reconstruction with and without filter
-    # Purpose: perform a full scan-and-reconstruct on a type-6 (hip) phantom
-    # and save the resulting image and the phantom for visual inspection.
-    # Expected output: two image files in the `results` folder named
-    # 'test_1_filtered', 'test_1_unfiltered' and 'test_1_phantom' showing the reconstruction and
-    # the ground-truth phantom respectively.
+    """ Test 1: type-6 hip phantom reconstruction with and without filter
+    We perform a full scan-and-reconstruct on a type-6 (hip) phantom
+    and save the resulting reconstruction and phantom for visual inspection.
+    The output consists of image files in the `results` folder named
+    'test_1_filtered', 'test_1_unfiltered' and 'test_1_phantom' showing the reconstruction and
+    the ground-truth phantom respectively.
+    """
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 6)
@@ -30,12 +31,11 @@ def test_1():
 
 
 def test_2():
-    # Test 2: compare profiles of 2 phantoms
-    # Purpose: generate 2 phantoms (circle and point) and compare the
-    # central row intensity profiles. This helps verify spatial response and
-    # resolution behaviour of the reconstruction pipeline.
-    # We saved 1D profile plots in 'results' folder.
-
+    """ Test 2: compare profiles of 2 phantoms (circle and point)
+    We generate the 2 phantoms and compare the central row intensity profiles.
+    This helps verify spatial response and resolution behaviour of the reconstruction.
+    1D profile is saved as plots in 'results' folder.
+    """ 
     # work out what the initial conditions should be
     mat = Material()
     src = Source()
@@ -52,11 +52,12 @@ def test_2():
 
 
 def test_3():
-    # Test 3: ideal-source bone phantom mean-value check
-    # Purpose: use an ideal source to scan a bone phantom and print
-    # the theoretical vs measured mean attenuation in the central ROI. This is
-    # useful for numeric sanity checks rather than visual inspection.
-    # Ideal coefficient and measured mean value are outputed as text file.
+    """ Test 3: ideal-source bone phantom mean-value check.
+    We use an ideal source to scan a bone phantom and print the 
+    theoretical vs measured mean attenuation in the central ROI.
+    This is for numeric sanity checks rather than visual inspection.
+    Ideal coefficient and measured mean value are outputed as text file.
+    """ 
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 1, "Bone")
