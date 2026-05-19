@@ -9,20 +9,22 @@ from create_dicom import *
 from ct_calibrate import *
 
 def test_1():
-    # Test 1: type-6 hip phantom reconstruction
+    # Test 1: type-6 hip phantom reconstruction with and without filter
     # Purpose: perform a full scan-and-reconstruct on a type-6 (hip) phantom
     # and save the resulting image and the phantom for visual inspection.
     # Expected output: two image files in the `results` folder named
-    # 'test_1_image' and 'test_1_phantom' showing the reconstruction and
+    # 'test_1_filtered', 'test_1_unfiltered' and 'test_1_phantom' showing the reconstruction and
     # the ground-truth phantom respectively.
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 6)
     s = src.photon('100kVp, 2mm Al')
-    y = scan_and_reconstruct(s, mat, p, 0.01, 256)
+    y_filtered = scan_and_reconstruct(s, mat, p, 0.01, 256, use_filter=True)
+    y_unfiltered = scan_and_reconstruct(s, mat, p, 0.01, 256, use_filter=False)
 
     # save some meaningful results
-    save_draw(y, 'results', 'test_1_image')
+    save_draw(y_filtered, 'results', 'test_1_filtered')
+    save_draw(y_unfiltered, 'results', 'test_1_unfiltered')
     save_draw(p, 'results', 'test_1_phantom')
 
 
@@ -71,9 +73,46 @@ def test_3():
         f.write('Ideal value: ' + str(mat.coeff('Bone')[idx]) + '\n')
         f.write('Mean value: ' + str(mean_val) + '\n')
 
-print('Test 1')
-test_1()
-print('Test 2')
-test_2()
-print('Test 3')
-test_3()
+def test_4():
+    """ Test 4: Investigate the Effect of Angles
+    Point Filtered Reconstruction with different angles (ideal source, with threshold)
+    """
+    mat = Material()
+    src = Source()
+    p = ct_phantom(mat.name, 256, 2)
+    s = fake_source(src.mev, 0.1, method='ideal')
+    save_draw(p, 'results', 'test_4_phantom')
+    
+    angles = [32, 64, 128, 256, 512]
+    for angle in angles:
+        y = scan_and_reconstruct(s, mat, p, 0.1, angle)
+        save_draw(y, 'results', f'test_4_reconstruction_{angle}', caxis=[0,0.05*np.max(y)])
+        
+def test_5(): 
+    """ Test 5: Investigate the Effect of Interpolation 
+    """
+    mat = Material()
+    src = Source()
+    p = ct_phantom(mat.name, 256, 2)
+    save_draw(p, 'results', 'test_5_phantom')
+    
+    s = fake_source(src.mev, 0.1, method='ideal')
+    
+    orders = [0, 1, 3]
+    for order in orders:
+        y = scan_and_reconstruct(s, mat, p, 0.1, 256)
+        save_draw(y, 'results', f'test_5_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
+    
+    y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
+    save_draw(y_lin, 'results', 'test_5_reconstruction_linear', caxis=[0,0.05*np.max(y_lin)])
+     
+# print('Test 1')
+# test_1()
+# print('Test 2')
+# test_2()
+# print('Test 3')
+# test_3()
+print('Test 4')
+test_4()
+print('Test 5')
+test_5()
