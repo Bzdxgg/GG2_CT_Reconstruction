@@ -49,7 +49,6 @@ def test_2():
 
 
 
-
 def test_3():
     # Test 3: ideal-source bone phantom mean-value check
     # Purpose: use an ideal source to scan a bone phantom and print
@@ -58,7 +57,7 @@ def test_3():
     # Ideal coefficient and measured mean value are outputed as text file.
     mat = Material()
     src = Source()
-    p = ct_phantom(mat.name, 256, 1, 'Bone')
+    p = ct_phantom(mat.name, 256, 1, "Bone")
     s = fake_source(src.mev, 0.1, method='ideal')
     y = scan_and_reconstruct(s, mat, p, 0.1, 256)
 
@@ -72,9 +71,9 @@ def test_3():
         f.write('Ideal value: ' + str(mat.coeff('Bone')[idx]) + '\n')
         f.write('Mean value: ' + str(mean_val) + '\n')
 
-# print('Test 1')
-# test_1()
-# print('Test 2')
-# test_2()
+print('Test 1')
+test_1()
+print('Test 2')
+test_2()
 print('Test 3')
 test_3()
