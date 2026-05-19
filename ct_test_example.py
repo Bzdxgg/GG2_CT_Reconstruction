@@ -89,7 +89,7 @@ def test_4():
         save_draw(y, 'results', f'test_4_reconstruction_{angle}', caxis=[0,0.05*np.max(y)])
         
 def test_5(): 
-    """ Test 5: Investigate the Effect of Interpolation 
+    """ Test 5: Investigate the Effect of Different Interpolation Methods and Orders
     """
     mat = Material()
     src = Source()
@@ -101,18 +101,39 @@ def test_5():
     orders = [0, 1, 3]
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256)
-        save_draw(y, 'results', f'test_5_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
+        # save_draw(y, 'results', f'test_5_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
+        save_plot(y[128,:], 'results', f'test_5_reconstruction_order_{order}')
     
     y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
-    save_draw(y_lin, 'results', 'test_5_reconstruction_linear', caxis=[0,0.05*np.max(y_lin)])
-     
+    # save_draw(y_lin, 'results', 'test_5_reconstruction_linear', caxis=[0,0.05*np.max(y_lin)])
+    save_plot(y_lin[128,:], 'results', 'test_5_reconstruction_linear')
+
+def test_6():
+    """ Test 6: Investigate the Effect of Alpha in Ramp Filter
+    """
+    mat = Material()
+    src = Source()
+    p = ct_phantom(mat.name, 256, 2)
+    s = fake_source(src.mev, 0.1, method='ideal')
+    save_draw(p, 'results', 'test_6_phantom')
+    
+    alphas = [0.001, 0.01, 0.1, 0.5, 1.0, 5.0]
+    for alpha in alphas:
+        y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, alpha=alpha)
+        # save_draw(y, 'results', f'test_6_reconstruction_alpha_{alpha}', caxis=[0,0.05*np.max(y)])
+        alpha_str = str(alpha).replace('.', '_')
+        save_plot(y[128,:], 'results', f'test_6_reconstruction_alpha_{alpha_str}')
+        
+        
 # print('Test 1')
 # test_1()
 # print('Test 2')
 # test_2()
 # print('Test 3')
 # test_3()
-print('Test 4')
-test_4()
-print('Test 5')
-test_5()
+# print('Test 4')
+# test_4()
+# print('Test 5')
+# test_5()
+print('Test 6')
+test_6()
