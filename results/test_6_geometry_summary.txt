@@ -1,5 +1,0 @@
-Test 5: Geometric Scale and Location
-Original Center : 127.5
-Recon Center    : 127.5
-Original Width  : 203
-Recon Width     : 203

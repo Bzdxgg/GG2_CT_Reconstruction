@@ -196,17 +196,25 @@ def test_5():
     plt.grid(True)
     plt.tight_layout()
     plt.savefig("results/test_5_reconstruction_all_alphas.png", dpi=300)
-    plt.show()
-    save_draw(p, 'results', 'test_5_phantom')
     
-    alphas = [0.001, 0.01, 0.1, 0.5, 1.0, 5.0]
-    for alpha in alphas:
-        y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, alpha=alpha)
-        # save_draw(y, 'results', f'test_5_reconstruction_alpha_{alpha}', caxis=[0,0.05*np.max(y)])
-        alpha_str = str(alpha).replace('.', '_')
-        save_plot(y[128,:], 'results', f'test_5_reconstruction_alpha_{alpha_str}')
-        
 def test_6():
+    """
+    Test 6: geometric scale and position verification.
+    We use an ideal source to reconstruct a circular phantom and compare
+    the central-row profiles of the original and reconstructed images.
+
+    The object centre and width are measured using a 50% threshold to
+    check whether the reconstruction preserves geometric position and scale.
+
+    RESULTS ANALYSIS:
+    1. Position:
+    The reconstructed profile remains centred at approximately the same
+    pixel location as the original phantom.
+
+    2. Scale:
+    The reconstructed profile width remains close to the original width,
+    indicating minimal geometric distortion during reconstruction.
+    """
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 1)
@@ -214,6 +222,7 @@ def test_6():
     
     y = scan_and_reconstruct(s, mat, p, 0.1, 256)
 
+    # save some meaningful results
     profile_orig = p[128, :]
     profile_recon = y[128, :]
 
@@ -236,30 +245,28 @@ def test_6():
         f.write(f'Original Width  : {width_orig}\n')
         f.write(f'Recon Width     : {width_recon}\n')
 
+    # Plot original and reconstructed profiles together for visual comparison
     fig, ax = plt.subplots(figsize=(10, 6))
-    
     ax.plot(profile_orig, label='Original Phantom Profile', color='black', linewidth=2)
     ax.plot(profile_recon, label='Reconstructed Profile', color='crimson', linestyle='--')
-    
     ax.set_title('Geometric Verification: Profile Comparison (Row 128)')
     ax.set_xlabel('Pixel Index')
     ax.set_ylabel('Attenuation Coefficient')
     ax.legend()
     ax.grid(True, linestyle=':', alpha=0.6)
-    
     plt.tight_layout()
     plt.savefig('results/test_6_combined_profiles.png')
     plt.close()
         
-# print('Test 1')
-# test_1()
-# print('Test 2')
-# test_2()
+print('Test 1')
+test_1()
+print('Test 2')
+test_2()
 # print('Test 3')
 # test_3()
 # print('Test 4')
 # test_4()
 # print('Test 5')
 # test_5()
-print('Test 6')
-test_6()    
+# print('Test 6')
+# test_6()    
