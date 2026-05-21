@@ -165,6 +165,11 @@ def test_4():
 
 def test_5():
     """ Test 5: Investigate the Effect of Alpha in Ramp Filter
+    It saves central-row profiles for each alpha so filter strength can be compared directly.
+
+    RESULTS ANALYSIS:
+    For alpha=0.001, it is very sharp but noisy, with strong high-frequency ringing.
+    As alpha increases, there is less ringing and improved stability. It also becomes smoother.
     """
     mat = Material()
     src = Source()
