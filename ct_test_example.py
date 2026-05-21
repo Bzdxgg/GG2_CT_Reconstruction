@@ -83,8 +83,8 @@ def test_2():
     # print(f"Ideal value is {mat.coeff('Bone')[idx]}")
     # print(f"Mean value is {mean_val}")
     
-    save_draw(y_titanium, 'results', 'test_2_reconstruction_titanium')
-    save_draw(y_bone, 'results', 'test_2_reconstruction_bone')
+    save_draw(y_titanium, 'results', 'test_2_reconstruction_titanium', title='Point Phantom (Titanium), 0.1kVp ideal source')
+    save_draw(y_bone, 'results', 'test_2_reconstruction_bone', title='Point Phantom (Bone), 0.1kVp ideal source')
 
 
     with open('results/test_2_summary.txt', 'w') as f:
@@ -111,15 +111,22 @@ def test_3():
     src = Source()
     p = ct_phantom(mat.name, 256, 2)
     s = fake_source(src.mev, 0.1, method='ideal')
-    save_draw(p, 'results', 'test_3_phantom')
+    save_draw(p, 'results', 'test_3_phantom', title='Point Phantom(Default Materials)')
     
     angles = [32, 64, 128, 256, 512]
     for angle in angles:
         y = scan_and_reconstruct(s, mat, p, 0.1, angle)
-        save_draw(y, 'results', f'test_3_reconstruction_{angle}', caxis=[0,0.05*np.max(y)])
+        save_draw(y, 'results', f'test_3_reconstruction_{angle}', caxis=[0,0.05*np.max(y)], title='Point Phantom (Default Materials), ' + str(angle) + ' angles, 0.1kVp ideal source')
         
 def test_4(): 
     """ Test 4: Investigate the Effect of Different Interpolation Methods and Orders
+
+    RESULTS ANALYSIS:
+    1. Order 0 (Nearest-Neighbor): Exhibits a jagged profile. 
+    2. Order 1 & Linear Interp: Overlap perfectly, showing that they are 
+       mathematically equivalent. Smoothed out slightly but 
+       introduce slight amplitude damping at the peak of the point.
+    3. Order 3 (Cubic Spline): Yields the most accurate impulse response. 
     """
     mat = Material()
     src = Source()
@@ -128,42 +135,8 @@ def test_4():
     
     s = fake_source(src.mev, 0.1, method='ideal')
     
-    orders = [0, 1, 3]
-    
-    import matplotlib.pyplot as plt
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    for order in orders:
-        y = scan_and_reconstruct(
-            s, mat, p, 0.1, 256,
-            use_filter=True,
-            order=order,
-            skip=1,
-            use_interp1d=False
-        )
-
-        ax.plot(y[128, :], label=f'Order {order}')
-
-    # Plot linear interpolation result
-    y_lin = scan_and_reconstruct(
-        s, mat, p, 0.1, 256,
-        use_filter=True,
-        order=1,
-        skip=1,
-        use_interp1d=True
-    )
-    ax.plot(y_lin[128, :], label='Linear interp', linestyle='dotted')
-    ax.set_xlim(120, 135)   # adjust as needed
-    ax.set_title('Reconstruction Comparison')
-    ax.set_xlabel('Index')
-    ax.set_ylabel('Value')
-    ax.legend()
-
-    plt.tight_layout()
-    plt.savefig('results/test_4_combined.png')
-    plt.close()
-        
+    # Generate reconstructions with different interpolation methods and orders
+    orders = [0, 1, 3]    
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
         # save_draw(y, 'results', f'test_4_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
@@ -172,16 +145,26 @@ def test_4():
     y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
     # save_draw(y_lin, 'results', 'test_4_reconstruction_linear', caxis=[0,0.05*np.max(y_lin)])
     save_plot(y_lin[128,:], 'results', 'test_4_reconstruction_linear')
+    
+    # Plot all profiles together for comparison
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for order in orders:
+        y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
+        ax.plot(y[128, :], label=f'Order {order}')
+    y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
+    ax.plot(y_lin[128, :], label='Linear interp', linestyle='dotted')
+    ax.set_xlim(120, 135)   # adjust as needed
+    ax.set_title('Reconstruction Comparison')
+    ax.set_xlabel('Index')
+    ax.set_ylabel('Value')
+    ax.legend()
+    plt.tight_layout()
+    plt.savefig('results/test_4_combined.png')
+    plt.close()
 
 def test_5():
     """ Test 5: Investigate the Effect of Alpha in Ramp Filter
-
-    The phantom is reconstructed for multiple values of the filter parameter
-    'alpha', then the central row profile is saved for each reconstruction.
-
-    RESULTS ANALYSIS:
-    For alpha = 0.001, it is very sharp and noisy, with ringing and high-frequency detail.
-    As alpha increases, there is reduced ringing. The profile becomes smoother and less noisy.
     """
     mat = Material()
     src = Source()
@@ -221,7 +204,7 @@ def test_5():
 # test_2()
 # print('Test 3')
 # test_3()
-# print('Test 4')
-# test_4()
-print('Test 5')
-test_5()
+print('Test 4')
+test_4()
+# print('Test 5')
+# test_5()
