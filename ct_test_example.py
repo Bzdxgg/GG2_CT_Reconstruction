@@ -120,6 +120,13 @@ def test_3():
         
 def test_4(): 
     """ Test 4: Investigate the Effect of Different Interpolation Methods and Orders
+
+    RESULTS ANALYSIS:
+    1. Order 0 (Nearest-Neighbor): Exhibits a jagged profile. 
+    2. Order 1 & Linear Interp: Overlap perfectly, showing that they are 
+       mathematically equivalent. Smoothed out slightly but 
+       introduce slight amplitude damping at the peak of the point.
+    3. Order 3 (Cubic Spline): Yields the most accurate impulse response. 
     """
     mat = Material()
     src = Source()
