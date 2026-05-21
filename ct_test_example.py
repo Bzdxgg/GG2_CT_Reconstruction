@@ -187,6 +187,24 @@ def test_5():
     src = Source()
     p = ct_phantom(mat.name, 256, 2)
     s = fake_source(src.mev, 0.1, method='ideal')
+    plt.figure(figsize=(10, 6))
+    alphas = [0.001, 0.5, 1.0, 5.0]
+
+    for alpha in alphas:
+        y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, alpha=alpha)
+        
+        alpha_str = str(alpha)
+        plt.plot(y[128, :], label=f'alpha={alpha_str}')
+
+    plt.title("Reconstruction comparison (center row)")
+    plt.xlabel("Position")
+    plt.ylabel("Intensity")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    
+    plt.savefig("results/test_5_reconstruction_all_alphas.png", dpi=300)
+    plt.show()
     save_draw(p, 'results', 'test_5_phantom')
     
     alphas = [0.001, 0.01, 0.1, 0.5, 1.0, 5.0]
@@ -203,7 +221,7 @@ def test_5():
 # test_2()
 # print('Test 3')
 # test_3()
-print('Test 4')
-test_4()
-# print('Test 5')
-# test_5()
+# print('Test 4')
+# test_4()
+print('Test 5')
+test_5()
