@@ -49,8 +49,8 @@ def test_1():
     y_2_filtered = scan_and_reconstruct(s, mat, p_2, 0.01, 256)
 
     # save some meaningful results
-    save_plot(y_1_filtered[128,:], 'results', 'test_2_plot_Circle', title='Central Row Profile of Filtered Circle Phantom (Default Materials), 80kVp, 1mm Al')
-    save_plot(y_2_filtered[128,:], 'results', 'test_2_plot_Point', title='Central Row Profile of Filtered Point Phantom (Default Materials), 80kVp, 1mm Al')
+    save_plot(y_1_filtered[128,:], 'results', 'test_1_plot_Circle', title='Central Row Profile of Filtered Circle Phantom (Default Materials), 80kVp, 1mm Al')
+    save_plot(y_2_filtered[128,:], 'results', 'test_1_plot_Point', title='Central Row Profile of Filtered Point Phantom (Default Materials), 80kVp, 1mm Al')
 
 
 
@@ -198,12 +198,13 @@ def test_5():
     plt.savefig("results/test_5_reconstruction_all_alphas.png", dpi=300)
     plt.show()
 
-print('Test 1')
-test_1()
-print('Test 2')
-test_2()
-print('Test 3')
-test_3()
+        
+# print('Test 1')
+# test_1()
+# print('Test 2')
+# test_2()
+# print('Test 3')
+# test_3()
 print('Test 4')
 test_4()
 print('Test 5')
