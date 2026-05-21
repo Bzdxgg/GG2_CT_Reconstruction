@@ -152,7 +152,6 @@ def test_4():
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
         ax.plot(y[128, :], label=f'Order {order}')
-    # Plot linear interpolation result
     y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
     ax.plot(y_lin[128, :], label='Linear interp', linestyle='dotted')
     ax.set_xlim(120, 135)   # adjust as needed
