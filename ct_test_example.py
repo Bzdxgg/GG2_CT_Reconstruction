@@ -173,6 +173,13 @@ def test_4():
 
 def test_5():
     """ Test 5: Investigate the Effect of Alpha in Ramp Filter
+
+    The phantom is reconstructed for multiple values of the filter parameter
+    'alpha', then the central row profile is saved for each reconstruction.
+
+    RESULTS ANALYSIS:
+    For alpha = 0.001, it is very sharp and noisy, with ringing and high-frequency detail.
+    As alpha increases, there is reduced ringing. The profile becomes smoother and less noisy.
     """
     mat = Material()
     src = Source()
