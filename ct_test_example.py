@@ -10,21 +10,23 @@ from ct_calibrate import *
 
 def test_1():
     """
-    Test 1: Test the reconstruction using a non-ideal source 
-    to verify that reasonable reconstruction is obtained 
-    under realistic imaging conditions.
+    Test 1: non-ideal-source reconstruction visualisation and profile comparison.
     
-    A type-6 hip phantom is reconstructed with and without filtering,
-    while circle and point phantoms are reconstructed to compare their
-    central-row intensity profiles.
-    
-    The filtered reconstruction is expected to recover sharper edges 
-    with structural detail, while the unfiltered reconstruction produces
-    a blurred image. 
-    
-    From the reconstructed central-row profile, 
-    the circle phantom shows a broader intensity distribution while
-    the point phantom produces a sharper peak concentrated over fewer pixels.
+    We use a non-ideal source to reconstruct a type-6 hip phantom
+    with and without filtering, and compare the reconstructed central-row
+    profiles of circle and point phantoms.
+    This test is intended for qualitative inspection of reconstruction behaviour
+    under realistic imaging conditions. 
+
+    RESULTS ANALYSIS:
+    1. Filtered vs unfiltered reconstruction:
+    The filtered reconstruction recovers sharper edges and structural
+    detail, while the unfiltered reconstruction appears blurred.
+
+    2. Circle vs point phantom profiles:
+    The circle phantom produces a broader intensity distribution across the
+    central row, whereas the point phantom produces a more
+    localised peak concentrated over fewer pixels.
     """
     
     mat = Material()
