@@ -101,11 +101,10 @@ def test_3():
     RESULTS ANALYSIS:
     Angles < 256: Using fewer than 256 projection angles causes strong angular aliasing 
     because there aren't enough views to fully sample the image. This leaves gaps in the 
-    Radon transform data, so the back-projected rays don't cancel properly outside the center. 
-    The result is the noticeable radial “starburst” streaking artifact.
+    Radon transform data, so the back projected rays don't cancel properly outside the center. 
+    This results in radial streaking artifact.
     Angles ≥ 256: At 256 or more projection angles, the sampling becomes dense enough for 
-    a 256x256 grid. The back-projected rays combine much more cleanly, background artifacts 
-    are greatly reduced, and the central point is reconstructed correctly.
+    a 256x256 grid. The backc projected rays combine much more cleanly.
     """
     mat = Material()
     src = Source()
@@ -218,7 +217,7 @@ def test_6():
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 1)
-    s = fake_source(src.mev, 0.1 / 0.7, method='ideal')
+    s = fake_source(src.mev, 0.1, method='ideal')
     
     y = scan_and_reconstruct(s, mat, p, 0.1, 256)
 
@@ -258,14 +257,14 @@ def test_6():
     plt.savefig('results/test_6_combined_profiles.png')
     plt.close()
         
-# print('Test 1')
-# test_1()
-# print('Test 2')
-# test_2()
-# print('Test 3')
-# test_3()
-# print('Test 4')
-# test_4()
+print('Test 1')
+test_1()
+print('Test 2')
+test_2()
+print('Test 3')
+test_3()
+print('Test 4')
+test_4()
 print('Test 5')
 test_5()
 print('Test 6')
