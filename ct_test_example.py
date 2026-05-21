@@ -203,7 +203,49 @@ def test_5():
         save_plot(y[128,:], 'results', f'test_5_reconstruction_alpha_{alpha_str}')
         
 def test_6():
+    mat = Material()
+    src = Source()
+    p = ct_phantom(mat.name, 256, 1)
+    s = fake_source(src.mev, 0.1 / 0.7, method='ideal')
+    
+    y = scan_and_reconstruct(s, mat, p, 0.1, 256)
 
+    profile_orig = p[128, :]
+    profile_recon = y[128, :]
+
+    thresh_orig = np.max(profile_orig) * 0.5
+    thresh_recon = np.max(profile_recon) * 0.5
+
+    edges_orig = np.where(profile_orig > thresh_orig)[0]
+    edges_recon = np.where(profile_recon > thresh_recon)[0]
+
+    center_orig = (edges_orig[0] + edges_orig[-1]) / 2.0
+    center_recon = (edges_recon[0] + edges_recon[-1]) / 2.0
+
+    width_orig = edges_orig[-1] - edges_orig[0]
+    width_recon = edges_recon[-1] - edges_recon[0]
+
+    with open('results/test_6_geometry_summary.txt', 'w') as f:
+        f.write('Test 5: Geometric Scale and Location\n')
+        f.write(f'Original Center : {center_orig}\n')
+        f.write(f'Recon Center    : {center_recon}\n')
+        f.write(f'Original Width  : {width_orig}\n')
+        f.write(f'Recon Width     : {width_recon}\n')
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    ax.plot(profile_orig, label='Original Phantom Profile', color='black', linewidth=2)
+    ax.plot(profile_recon, label='Reconstructed Profile', color='crimson', linestyle='--')
+    
+    ax.set_title('Geometric Verification: Profile Comparison (Row 128)')
+    ax.set_xlabel('Pixel Index')
+    ax.set_ylabel('Attenuation Coefficient')
+    ax.legend()
+    ax.grid(True, linestyle=':', alpha=0.6)
+    
+    plt.tight_layout()
+    plt.savefig('results/test_6_combined_profiles.png')
+    plt.close()
         
 # print('Test 1')
 # test_1()
@@ -211,7 +253,9 @@ def test_6():
 # test_2()
 # print('Test 3')
 # test_3()
-print('Test 4')
-test_4()
+# print('Test 4')
+# test_4()
 # print('Test 5')
 # test_5()
+print('Test 6')
+test_6()    
