@@ -9,45 +9,46 @@ from create_dicom import *
 from ct_calibrate import *
 
 def test_1():
-    """ Test 1: type-6 hip phantom reconstruction with and without filter
-    We perform a full scan-and-reconstruct on a type-6 (hip) phantom
-    and save the resulting reconstruction and phantom for visual inspection.
-    The output consists of image files in the `results` folder named
-    'test_1_filtered', 'test_1_unfiltered' and 'test_1_phantom' showing the reconstruction and
-    the ground-truth phantom respectively.
     """
+    Test 1: Test the reconstruction using a non-ideal source 
+    to verify that reasonable reconstruction is obtained 
+    under realistic imaging conditions.
+    
+    A type-6 hip phantom is reconstructed with and without filtering,
+    while circle and point phantoms are reconstructed to compare their
+    central-row intensity profiles.
+    
+    The filtered reconstruction is expected to recover sharper edges 
+    with structural detail, while the unfiltered reconstruction produces
+    a blurred image. 
+    
+    From the reconstructed central-row profile, 
+    the circle phantom shows a broader intensity distribution while
+    the point phantom produces a sharper peak concentrated over fewer pixels.
+    """
+    
     mat = Material()
     src = Source()
-    p = ct_phantom(mat.name, 256, 6)
     s = src.photon('100kVp, 2mm Al')
-    y_filtered = scan_and_reconstruct(s, mat, p, 0.01, 256, use_filter=True)
-    y_unfiltered = scan_and_reconstruct(s, mat, p, 0.01, 256, use_filter=False)
+    
+    # Visualise Type 6 Phantom with and without filter
+    p_6 = ct_phantom(mat.name, 256, 6)
+    y_6_filtered = scan_and_reconstruct(s, mat, p_6, 0.01, 256, use_filter=True)
+    y_6_unfiltered = scan_and_reconstruct(s, mat, p_6, 0.01, 256, use_filter=False)
+    save_draw(y_6_filtered, 'results', 'test_1_filtered', title='Filtered Type 6 (Default Materials), 100kVp, 2mm Al')
+    save_draw(y_6_unfiltered, 'results', 'test_1_unfiltered', title='Unfiltered Type 6 (Default Materials), 100kVp, 2mm Al')
+    save_draw(p_6, 'results', 'test_1_phantom', title='Type 6 (Default Materials) Phantom')
 
-    # save some meaningful results
-    save_draw(y_filtered, 'results', 'test_1_filtered')
-    save_draw(y_unfiltered, 'results', 'test_1_unfiltered')
-    save_draw(p, 'results', 'test_1_phantom')
 
-
-
-def test_2():
-    """ Test 2: compare profiles of 2 phantoms (circle and point)
-    We generate the 2 phantoms and compare the central row intensity profiles.
-    This helps verify spatial response and resolution behaviour of the reconstruction.
-    1D profile is saved as plots in 'results' folder.
-    """ 
-    # work out what the initial conditions should be
-    mat = Material()
-    src = Source()
-    p1 = ct_phantom(mat.name, 256, 1)
-    p2 = ct_phantom(mat.name, 256, 2)
+    p_1 = ct_phantom(mat.name, 256, 1)
+    p_2 = ct_phantom(mat.name, 256, 2)
     s = src.photon('80kVp, 1mm Al')
-    y1 = scan_and_reconstruct(s, mat, p1, 0.01, 256)
-    y2 = scan_and_reconstruct(s, mat, p2, 0.01, 256)
+    y_1_filtered = scan_and_reconstruct(s, mat, p_1, 0.01, 256)
+    y_2_filtered = scan_and_reconstruct(s, mat, p_2, 0.01, 256)
 
     # save some meaningful results
-    save_plot(y1[128,:], 'results', 'test_2_plot_Circle')
-    save_plot(y2[128,:], 'results', 'test_2_plot_Point')
+    save_plot(y_1_filtered[128,:], 'results', 'test_2_plot_Circle', title='Central Row Profile of Filtered Circle Phantom (Default Materials), 80kVp, 1mm Al')
+    save_plot(y_2_filtered[128,:], 'results', 'test_2_plot_Point', title='Central Row Profile of Filtered Point Phantom (Default Materials), 80kVp, 1mm Al')
 
 
 
@@ -126,6 +127,41 @@ def test_5():
     s = fake_source(src.mev, 0.1, method='ideal')
     
     orders = [0, 1, 3]
+    
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for order in orders:
+        y = scan_and_reconstruct(
+            s, mat, p, 0.1, 256,
+            use_filter=True,
+            order=order,
+            skip=1,
+            use_interp1d=False
+        )
+
+        ax.plot(y[128, :], label=f'Order {order}')
+
+    # Plot linear interpolation result
+    y_lin = scan_and_reconstruct(
+        s, mat, p, 0.1, 256,
+        use_filter=True,
+        order=1,
+        skip=1,
+        use_interp1d=True
+    )
+
+    ax.set_xlim(120, 135)   # adjust as needed
+    ax.set_title('Reconstruction Comparison')
+    ax.set_xlabel('Index')
+    ax.set_ylabel('Value')
+    ax.legend()
+
+    plt.tight_layout()
+    plt.savefig('results/test_5_combined.png')
+    plt.close()
+        
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
         # save_draw(y, 'results', f'test_5_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
