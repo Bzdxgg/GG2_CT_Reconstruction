@@ -80,8 +80,6 @@ def test_2():
     mean_val_titanium = np.mean(y_titanium[64:192, 64:192])
     mean_val_bone = np.mean(y_bone[64:192, 64:192])
     idx = mat.mev.tolist().index(0.07)
-    # print(f"Ideal value is {mat.coeff('Bone')[idx]}")
-    # print(f"Mean value is {mean_val}")
     
     save_draw(y_titanium, 'results', 'test_2_reconstruction_titanium', title='Point Phantom (Titanium), 0.1kVp ideal source')
     save_draw(y_bone, 'results', 'test_2_reconstruction_bone', title='Point Phantom (Bone), 0.1kVp ideal source')
