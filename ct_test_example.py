@@ -139,12 +139,10 @@ def test_4():
     orders = [0, 1, 3]    
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
-        # save_draw(y, 'results', f'test_4_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
-        save_plot(y[128,:], 'results', f'test_4_reconstruction_order_{order}')
+        save_plot(y[128,:], 'results', f'test_4_reconstruction_order_{order}', title=f'Central Row Profile of Filtered Point Phantom (Default Materials), Order {order}, 0.1kVp ideal source')
     
     y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
-    # save_draw(y_lin, 'results', 'test_4_reconstruction_linear', caxis=[0,0.05*np.max(y_lin)])
-    save_plot(y_lin[128,:], 'results', 'test_4_reconstruction_linear')
+    save_plot(y_lin[128,:], 'results', 'test_4_reconstruction_linear', title='Central Row Profile of Filtered Point Phantom (Default Materials), Linear Interpolation, 0.1kVp ideal source')
     
     # Plot all profiles together for comparison
     import matplotlib.pyplot as plt
@@ -174,23 +172,29 @@ def test_5():
     mat = Material()
     src = Source()
     p = ct_phantom(mat.name, 256, 2)
+    save_draw(p, 'results', 'test_5_phantom', title='Point Phantom (Default Materials)')
+    
     s = fake_source(src.mev, 0.1, method='ideal')
-    plt.figure(figsize=(10, 6))
-    alphas = [0.001, 0.5, 1.0, 5.0]
-
+    alphas = [0.001, 0.01, 0.1, 0.5, 1.0, 5.0]
     for alpha in alphas:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, alpha=alpha)
-        
+        alpha_str = str(alpha).replace('.', '_')
+        save_plot(y[128,:], 'results', f'test_5_reconstruction_alpha_{alpha_str}', title=f'Central Row Profile of Filtered Point Phantom (Default Materials), Alpha {alpha}, 0.1kVp ideal source')
+
+    # Plot all profiles together for comparison
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 6))
+    alphas = [0.001, 0.5, 1.0, 5.0]
+    for alpha in alphas:
+        y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, alpha=alpha)
         alpha_str = str(alpha)
         plt.plot(y[128, :], label=f'alpha={alpha_str}')
-
     plt.title("Reconstruction comparison (center row)")
     plt.xlabel("Position")
     plt.ylabel("Intensity")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    
     plt.savefig("results/test_5_reconstruction_all_alphas.png", dpi=300)
     plt.show()
     save_draw(p, 'results', 'test_5_phantom')

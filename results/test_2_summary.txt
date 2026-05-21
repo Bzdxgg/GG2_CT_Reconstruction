@@ -2,4 +2,4 @@ Test 2: calibration circle phantom
 Ideal value for Titanium: 2.47240852255811
 Mean value for Titanium: 0.9073036518299669
 Ideal value for Bone: 0.502343497211306
-Mean value for Bone: 0.501085122039767
+Mean value for Bone: 0.5010851220397667
