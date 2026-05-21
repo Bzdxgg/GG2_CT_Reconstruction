@@ -49,8 +49,8 @@ def test_1():
     y_2_filtered = scan_and_reconstruct(s, mat, p_2, 0.01, 256)
 
     # save some meaningful results
-    save_plot(y_1_filtered[128,:], 'results', 'test_2_plot_Circle', title='Central Row Profile of Filtered Circle Phantom (Default Materials), 80kVp, 1mm Al')
-    save_plot(y_2_filtered[128,:], 'results', 'test_2_plot_Point', title='Central Row Profile of Filtered Point Phantom (Default Materials), 80kVp, 1mm Al')
+    save_plot(y_1_filtered[128,:], 'results', 'test_1_plot_Circle', title='Central Row Profile of Filtered Circle Phantom (Default Materials), 80kVp, 1mm Al')
+    save_plot(y_2_filtered[128,:], 'results', 'test_1_plot_Point', title='Central Row Profile of Filtered Point Phantom (Default Materials), 80kVp, 1mm Al')
 
 
 
@@ -202,6 +202,8 @@ def test_5():
         alpha_str = str(alpha).replace('.', '_')
         save_plot(y[128,:], 'results', f'test_5_reconstruction_alpha_{alpha_str}')
         
+def test_6():
+
         
 # print('Test 1')
 # test_1()
