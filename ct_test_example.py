@@ -13,9 +13,8 @@ def test_1():
     """
     Test 1: non-ideal-source reconstruction visualisation and profile comparison.
     
-    We use a non-ideal source to reconstruct a type-6 hip phantom
-    with and without filtering, and compare the reconstructed central-row
-    profiles of circle and point phantoms.
+    We use a non-ideal source to reconstruct a type 6 hip phantom with and without filtering, 
+    and compare the reconstructed central-row profiles of circle and point phantoms.
     This test is intended for qualitative inspection of reconstruction behaviour
     under realistic imaging conditions. 
 
@@ -102,7 +101,7 @@ def test_3():
     because there aren't enough views to fully sample the image. This leaves gaps in the 
     Radon transform data, so the back projected rays don't cancel properly outside the center. 
     This results in radial streaking artifact.
-    Angles ≥ 256: At 256 or more projection angles, the sampling becomes dense enough for 
+    Angles >/= 256: At 256 or more projection angles, the sampling becomes dense enough for 
     a 256x256 grid. The backc projected rays combine much more cleanly.
     """
     mat = Material()
@@ -130,7 +129,7 @@ def test_4():
     src = Source()
     p = ct_phantom(mat.name, 256, 2)
     save_draw(p, 'results', 'test_4_phantom')
-    
+
     s = fake_source(src.mev, 0.1, method='ideal')
     
     # Generate reconstructions with different interpolation methods and orders
@@ -138,7 +137,6 @@ def test_4():
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
         save_plot(y[128,:], 'results', f'test_4_reconstruction_order_{order}', title=f'Central Row Profile of Filtered Point Phantom (Default Materials), Order {order}, 0.1kVp ideal source')
-    
     y_lin = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=1, skip=1, use_interp1d=True)
     save_plot(y_lin[128,:], 'results', 'test_4_reconstruction_linear', title='Central Row Profile of Filtered Point Phantom (Default Materials), Linear Interpolation, 0.1kVp ideal source')
     
@@ -172,13 +170,15 @@ def test_5():
     save_draw(p, 'results', 'test_5_phantom', title='Point Phantom (Default Materials)')
     
     s = fake_source(src.mev, 0.1, method='ideal')
+    
+    # Vary alpha and save profiles for comparison
     alphas = [0.001, 0.01, 0.1, 0.5, 1.0, 5.0]
     for alpha in alphas:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, alpha=alpha)
         alpha_str = str(alpha).replace('.', '_')
         save_plot(y[128,:], 'results', f'test_5_reconstruction_alpha_{alpha_str}', title=f'Central Row Profile of Filtered Point Phantom (Default Materials), Alpha {alpha}, 0.1kVp ideal source')
 
-    # Plot all profiles together for comparison
+    # Plot all profiles together for comparison (use fewer alphas for better visibility)
     plt.figure(figsize=(10, 6))
     alphas = [0.001, 0.5, 1.0, 5.0]
     for alpha in alphas:
