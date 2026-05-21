@@ -9,21 +9,23 @@ from create_dicom import *
 from ct_calibrate import *
 
 def test_1():
-    # Test 1: Test the reconstruction using a non-ideal source 
-    # to verify that reasonable reconstruction is obtained 
-    # under realistic imaging conditions.
-    #
-    # A type-6 hip phantom is reconstructed with and without filtering,
-    # while circle and point phantoms are reconstructed to compare their
-    # central-row intensity profiles.
-    #
-    # The filtered reconstruction is expected to recover sharper edges 
-    # with structural detail, while the unfiltered reconstruction produces
-    # a blurred image. 
+    """
+    Test 1: Test the reconstruction using a non-ideal source 
+    to verify that reasonable reconstruction is obtained 
+    under realistic imaging conditions.
     
-    # From the reconstructed central-row profile, 
-    # the circle phantom shows a broader intensity distribution while
-    # the point phantom produces a sharper peak concentrated over fewer pixels.
+    A type-6 hip phantom is reconstructed with and without filtering,
+    while circle and point phantoms are reconstructed to compare their
+    central-row intensity profiles.
+    
+    The filtered reconstruction is expected to recover sharper edges 
+    with structural detail, while the unfiltered reconstruction produces
+    a blurred image. 
+    
+    From the reconstructed central-row profile, 
+    the circle phantom shows a broader intensity distribution while
+    the point phantom produces a sharper peak concentrated over fewer pixels.
+    """
     
     mat = Material()
     src = Source()
