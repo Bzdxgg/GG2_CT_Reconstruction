@@ -100,6 +100,41 @@ def test_5():
     s = fake_source(src.mev, 0.1, method='ideal')
     
     orders = [0, 1, 3]
+    
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for order in orders:
+        y = scan_and_reconstruct(
+            s, mat, p, 0.1, 256,
+            use_filter=True,
+            order=order,
+            skip=1,
+            use_interp1d=False
+        )
+
+        ax.plot(y[128, :], label=f'Order {order}')
+
+    # Plot linear interpolation result
+    y_lin = scan_and_reconstruct(
+        s, mat, p, 0.1, 256,
+        use_filter=True,
+        order=1,
+        skip=1,
+        use_interp1d=True
+    )
+
+    ax.set_xlim(120, 135)   # adjust as needed
+    ax.set_title('Reconstruction Comparison')
+    ax.set_xlabel('Index')
+    ax.set_ylabel('Value')
+    ax.legend()
+
+    plt.tight_layout()
+    plt.savefig('results/test_5_combined.png')
+    plt.close()
+        
     for order in orders:
         y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
         # save_draw(y, 'results', f'test_5_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
