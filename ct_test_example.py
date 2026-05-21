@@ -9,45 +9,44 @@ from create_dicom import *
 from ct_calibrate import *
 
 def test_1():
-    """ Test 1: type-6 hip phantom reconstruction with and without filter
-    We perform a full scan-and-reconstruct on a type-6 (hip) phantom
-    and save the resulting reconstruction and phantom for visual inspection.
-    The output consists of image files in the `results` folder named
-    'test_1_filtered', 'test_1_unfiltered' and 'test_1_phantom' showing the reconstruction and
-    the ground-truth phantom respectively.
-    """
+    # Test 1: Test the reconstruction using a non-ideal source 
+    # to verify that reasonable reconstruction is obtained 
+    # under realistic imaging conditions.
+    #
+    # A type-6 hip phantom is reconstructed with and without filtering,
+    # while circle and point phantoms are reconstructed to compare their
+    # central-row intensity profiles.
+    #
+    # The filtered reconstruction is expected to recover sharper edges 
+    # with structural detail, while the unfiltered reconstruction produces
+    # a blurred image. 
+    
+    # From the reconstructed central-row profile, 
+    # the circle phantom shows a broader intensity distribution while
+    # the point phantom produces a sharper peak concentrated over fewer pixels.
+    
     mat = Material()
     src = Source()
-    p = ct_phantom(mat.name, 256, 6)
     s = src.photon('100kVp, 2mm Al')
-    y_filtered = scan_and_reconstruct(s, mat, p, 0.01, 256, use_filter=True)
-    y_unfiltered = scan_and_reconstruct(s, mat, p, 0.01, 256, use_filter=False)
+    
+    # Visualise Type 6 Phantom with and without filter
+    p_6 = ct_phantom(mat.name, 256, 6)
+    y_6_filtered = scan_and_reconstruct(s, mat, p_6, 0.01, 256, use_filter=True)
+    y_6_unfiltered = scan_and_reconstruct(s, mat, p_6, 0.01, 256, use_filter=False)
+    save_draw(y_6_filtered, 'results', 'test_1_filtered', title='Filtered Type 6 (Default Materials), 100kVp, 2mm Al')
+    save_draw(y_6_unfiltered, 'results', 'test_1_unfiltered', title='Unfiltered Type 6 (Default Materials), 100kVp, 2mm Al')
+    save_draw(p_6, 'results', 'test_1_phantom', title='Type 6 (Default Materials) Phantom')
 
-    # save some meaningful results
-    save_draw(y_filtered, 'results', 'test_1_filtered')
-    save_draw(y_unfiltered, 'results', 'test_1_unfiltered')
-    save_draw(p, 'results', 'test_1_phantom')
 
-
-
-def test_2():
-    """ Test 2: compare profiles of 2 phantoms (circle and point)
-    We generate the 2 phantoms and compare the central row intensity profiles.
-    This helps verify spatial response and resolution behaviour of the reconstruction.
-    1D profile is saved as plots in 'results' folder.
-    """ 
-    # work out what the initial conditions should be
-    mat = Material()
-    src = Source()
-    p1 = ct_phantom(mat.name, 256, 1)
-    p2 = ct_phantom(mat.name, 256, 2)
+    p_1 = ct_phantom(mat.name, 256, 1)
+    p_2 = ct_phantom(mat.name, 256, 2)
     s = src.photon('80kVp, 1mm Al')
-    y1 = scan_and_reconstruct(s, mat, p1, 0.01, 256)
-    y2 = scan_and_reconstruct(s, mat, p2, 0.01, 256)
+    y_1_filtered = scan_and_reconstruct(s, mat, p_1, 0.01, 256)
+    y_2_filtered = scan_and_reconstruct(s, mat, p_2, 0.01, 256)
 
     # save some meaningful results
-    save_plot(y1[128,:], 'results', 'test_2_plot_Circle')
-    save_plot(y2[128,:], 'results', 'test_2_plot_Point')
+    save_plot(y_1_filtered[128,:], 'results', 'test_2_plot_Circle', title='Central Row Profile of Filtered Circle Phantom (Default Materials), 80kVp, 1mm Al')
+    save_plot(y_2_filtered[128,:], 'results', 'test_2_plot_Point', title='Central Row Profile of Filtered Point Phantom (Default Materials), 80kVp, 1mm Al')
 
 
 
@@ -60,19 +59,29 @@ def test_3():
     """ 
     mat = Material()
     src = Source()
-    p = ct_phantom(mat.name, 256, 1, "Bone")
+    p_titanium = ct_phantom(mat.name, 256, 1, "Titanium")
+    p_bone = ct_phantom(mat.name, 256, 1, "Bone")
     s = fake_source(src.mev, 0.1, method='ideal')
-    y = scan_and_reconstruct(s, mat, p, 0.1, 256)
+    y_titanium = scan_and_reconstruct(s, mat, p_titanium, 0.1, 256)
+    y_bone = scan_and_reconstruct(s, mat, p_bone, 0.1, 256)
 
     # save some meaningful results
-    mean_val = np.mean(y[64:192, 64:192])
+    mean_val_titanium = np.mean(y_titanium[64:192, 64:192])
+    mean_val_bone = np.mean(y_bone[64:192, 64:192])
     idx = mat.mev.tolist().index(0.07)
     # print(f"Ideal value is {mat.coeff('Bone')[idx]}")
     # print(f"Mean value is {mean_val}")
+    
+    save_draw(y_titanium, 'results', 'test_3_reconstruction_titanium')
+    save_draw(y_bone, 'results', 'test_3_reconstruction_bone')
+
+
     with open('results/test_3_summary.txt', 'w') as f:
         f.write('Test 3: calibration circle phantom\n')
-        f.write('Ideal value: ' + str(mat.coeff('Bone')[idx]) + '\n')
-        f.write('Mean value: ' + str(mean_val) + '\n')
+        f.write('Ideal value for Titanium: ' + str(mat.coeff('Titanium')[idx]) + '\n')
+        f.write('Mean value for Titanium: ' + str(mean_val_titanium) + '\n')
+        f.write('Ideal value for Bone: ' + str(mat.coeff('Bone')[idx]) + '\n')
+        f.write('Mean value for Bone: ' + str(mean_val_bone) + '\n')
 
 def test_4():
     """ Test 4: Investigate the Effect of Angles
@@ -165,11 +174,11 @@ def test_6():
 # test_1()
 # print('Test 2')
 # test_2()
-# print('Test 3')
-# test_3()
+print('Test 3')
+test_3()
 # print('Test 4')
 # test_4()
-print('Test 5')
-test_5()
+# print('Test 5')
+# test_5()
 # print('Test 6')
 # test_6()
