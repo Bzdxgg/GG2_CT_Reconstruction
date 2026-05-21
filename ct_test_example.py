@@ -60,19 +60,29 @@ def test_3():
     """ 
     mat = Material()
     src = Source()
-    p = ct_phantom(mat.name, 256, 1, "Bone")
+    p_titanium = ct_phantom(mat.name, 256, 1, "Titanium")
+    p_bone = ct_phantom(mat.name, 256, 1, "Bone")
     s = fake_source(src.mev, 0.1, method='ideal')
-    y = scan_and_reconstruct(s, mat, p, 0.1, 256)
+    y_titanium = scan_and_reconstruct(s, mat, p_titanium, 0.1, 256)
+    y_bone = scan_and_reconstruct(s, mat, p_bone, 0.1, 256)
 
     # save some meaningful results
-    mean_val = np.mean(y[64:192, 64:192])
+    mean_val_titanium = np.mean(y_titanium[64:192, 64:192])
+    mean_val_bone = np.mean(y_bone[64:192, 64:192])
     idx = mat.mev.tolist().index(0.07)
     # print(f"Ideal value is {mat.coeff('Bone')[idx]}")
     # print(f"Mean value is {mean_val}")
+    
+    save_draw(y_titanium, 'results', 'test_3_reconstruction_titanium')
+    save_draw(y_bone, 'results', 'test_3_reconstruction_bone')
+
+
     with open('results/test_3_summary.txt', 'w') as f:
         f.write('Test 3: calibration circle phantom\n')
-        f.write('Ideal value: ' + str(mat.coeff('Bone')[idx]) + '\n')
-        f.write('Mean value: ' + str(mean_val) + '\n')
+        f.write('Ideal value for Titanium: ' + str(mat.coeff('Titanium')[idx]) + '\n')
+        f.write('Mean value for Titanium: ' + str(mean_val_titanium) + '\n')
+        f.write('Ideal value for Bone: ' + str(mat.coeff('Bone')[idx]) + '\n')
+        f.write('Mean value for Bone: ' + str(mean_val_bone) + '\n')
 
 def test_4():
     """ Test 4: Investigate the Effect of Angles
@@ -130,11 +140,11 @@ def test_6():
 # test_1()
 # print('Test 2')
 # test_2()
-# print('Test 3')
-# test_3()
+print('Test 3')
+test_3()
 # print('Test 4')
 # test_4()
-print('Test 5')
-test_5()
+# print('Test 5')
+# test_5()
 # print('Test 6')
 # test_6()
