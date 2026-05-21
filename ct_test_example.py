@@ -101,7 +101,7 @@ def test_5():
     
     orders = [0, 1, 3]
     for order in orders:
-        y = scan_and_reconstruct(s, mat, p, 0.1, 256)
+        y = scan_and_reconstruct(s, mat, p, 0.1, 256, use_filter=True, order=order, skip=1, use_interp1d=False)
         # save_draw(y, 'results', f'test_5_reconstruction_order_{order}', caxis=[0,0.05*np.max(y)])
         save_plot(y[128,:], 'results', f'test_5_reconstruction_order_{order}')
     
@@ -134,7 +134,7 @@ def test_6():
 # test_3()
 # print('Test 4')
 # test_4()
-# print('Test 5')
-# test_5()
-print('Test 6')
-test_6()
+print('Test 5')
+test_5()
+# print('Test 6')
+# test_6()
