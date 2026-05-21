@@ -39,7 +39,7 @@ def test_1():
     save_draw(y_6_unfiltered, 'results', 'test_1_unfiltered', title='Unfiltered Type 6 (Default Materials), 100kVp, 2mm Al')
     save_draw(p_6, 'results', 'test_1_phantom', title='Type 6 (Default Materials) Phantom')
 
-
+    # Compare profile response of extended and localised structures
     p_1 = ct_phantom(mat.name, 256, 1)
     p_2 = ct_phantom(mat.name, 256, 2)
     s = src.photon('80kVp, 1mm Al')
