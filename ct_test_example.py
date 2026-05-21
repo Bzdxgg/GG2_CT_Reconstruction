@@ -153,7 +153,7 @@ def test_4():
         skip=1,
         use_interp1d=True
     )
-
+    ax.plot(y_lin[128, :], label='Linear interp', linestyle='dotted')
     ax.set_xlim(120, 135)   # adjust as needed
     ax.set_title('Reconstruction Comparison')
     ax.set_xlabel('Index')
@@ -194,9 +194,9 @@ def test_5():
 # test_1()
 # print('Test 2')
 # test_2()
-print('Test 3')
-test_3()
-# print('Test 4')
-# test_4()
+# print('Test 3')
+# test_3()
+print('Test 4')
+test_4()
 # print('Test 5')
 # test_5()
