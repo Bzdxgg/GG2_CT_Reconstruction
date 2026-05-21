@@ -83,8 +83,8 @@ def test_2():
     # print(f"Ideal value is {mat.coeff('Bone')[idx]}")
     # print(f"Mean value is {mean_val}")
     
-    save_draw(y_titanium, 'results', 'test_2_reconstruction_titanium')
-    save_draw(y_bone, 'results', 'test_2_reconstruction_bone')
+    save_draw(y_titanium, 'results', 'test_2_reconstruction_titanium', title='Point Phantom (Titanium), 0.1kVp ideal source')
+    save_draw(y_bone, 'results', 'test_2_reconstruction_bone', title='Point Phantom (Bone), 0.1kVp ideal source')
 
 
     with open('results/test_2_summary.txt', 'w') as f:
@@ -111,12 +111,12 @@ def test_3():
     src = Source()
     p = ct_phantom(mat.name, 256, 2)
     s = fake_source(src.mev, 0.1, method='ideal')
-    save_draw(p, 'results', 'test_3_phantom')
+    save_draw(p, 'results', 'test_3_phantom', title='Point Phantom(Default Materials)')
     
     angles = [32, 64, 128, 256, 512]
     for angle in angles:
         y = scan_and_reconstruct(s, mat, p, 0.1, angle)
-        save_draw(y, 'results', f'test_3_reconstruction_{angle}', caxis=[0,0.05*np.max(y)])
+        save_draw(y, 'results', f'test_3_reconstruction_{angle}', caxis=[0,0.05*np.max(y)], title='Point Phantom (Default Materials), ' + str(angle) + ' angles, 0.1kVp ideal source')
         
 def test_4(): 
     """ Test 4: Investigate the Effect of Different Interpolation Methods and Orders
@@ -175,13 +175,6 @@ def test_4():
 
 def test_5():
     """ Test 5: Investigate the Effect of Alpha in Ramp Filter
-
-    The phantom is reconstructed for multiple values of the filter parameter
-    'alpha', then the central row profile is saved for each reconstruction.
-
-    RESULTS ANALYSIS:
-    For alpha = 0.001, it is very sharp and noisy, with ringing and high-frequency detail.
-    As alpha increases, there is reduced ringing. The profile becomes smoother and less noisy.
     """
     mat = Material()
     src = Source()
